@@ -1,0 +1,148 @@
+#! /usr/bin/env sh
+
+if [ -z "$I2P" -a -d "$PWD/../i2p/pkg-temp" ]; then
+	export I2P=$PWD/../i2p/pkg-temp
+fi
+
+if [ ! -d "$I2P" ]; then
+    export I2P=$HOME/i2p
+fi
+
+if [ ! -d "$I2P" ]; then
+    export I2P=/usr/share/i2p
+fi
+
+if [ ! -d "$I2P" ]; then
+	echo "Can't locate your I2P installation. Please add a environment variable named I2P with the path to the folder as value"
+	echo "On OSX this solved with running: export I2P=/Applications/i2p if default install directory is used. On Linux, this is"
+    echo "usually under \$HOME/i2p, or, if running as a service under Debian or Ubuntu, /usr/share/i2p."
+	exit 1
+fi
+
+usage() {
+    echo "# Generating I2P Plugin Signing Keys" 1>&2
+    echo "" 1>&2;
+    echo "## Usage: $0" 1>&2;
+    echo "" 1>&2;
+    echo "### Options" 1>&2;
+    echo "  -h this message" 1>&2;
+    echo "  -d show local defaults" 1>&2;
+    echo "  -l List keys" 1>&2;
+    echo "  -p [path] Path to an I2P installation directory, usually \$HOME/i2p." 1>&2;
+    echo "  -s [signer] Signer's e-mail address." 1>&2;
+    echo "  -n [name] Name to use for the key" 1>&2;
+    echo "" 1>&2;
+    echo "### Commands:" 1>&2;
+    echo "   > generate_keys - If the keys do not already exist then" 1>&2;
+    echo "      > create_keys - create them" 1>&2;
+    echo "      > copy_keys - copy them to the local I2P plugin certificates directory" 1>&2;
+    echo "   > usage - same as -h but use stderr instead of stdout" 1>&2;
+    echo "" 1>&2;
+    exit 1;
+}
+
+while getopts "p:s:n:lhd" o; do
+    case "${o}" in
+        p)
+            PUBKEYDIR=${OPTARG}
+            ;;
+        p)
+            SIGNER=${OPTARG}
+            ;;
+        n)
+            NAME=${OPTARG}
+            ;;
+        l)
+            LS=true
+            ;;
+        d)
+            DSHOW=true
+            ;;
+        h)
+            usage 2>&1
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+shift $((OPTIND-1))
+
+if [ -z "${SIGNER}" ]; then
+    SIGNER=user@mail.i2p
+fi
+
+if [ -z "${NAME}" ]; then
+    NAME=user
+fi
+
+if [ -z "${PUBKEYDIR}" ]; then
+    PUBKEYDIR="$I2P/i2p-plugin-dev-keys"
+fi
+
+if [ $LS ]; then
+    if [ -d ${PUBKEYDIR} ]; then
+        echo "Keys found in key directory:"
+        ls $PUBKEYDIR
+    else
+        echo "No keys have been generated for" $(echo $PUBKEYDIR | sed "s|$HOME|~|g") "yet"
+    fi
+    exit
+fi
+
+CPATH=$I2P/lib/i2p.jar:/usr/share/java/gnu-getopt.jar
+
+
+PUBKEYFILE=$PUBKEYDIR/$NAME-public-signing.key
+PRIVKEYFILE=$PUBKEYDIR/$NAME-private-signing.key
+B64KEYFILE=$PUBKEYDIR/$NAME-public-signing.txt
+PUBKEYSTORE=$PUBKEYDIR/$NAME-su3-public-signing.crt
+PRIVKEYSTORE=$PUBKEYDIR/$NAME-su3-keystore.ks
+
+KEYTYPE=RSA_SHA512_4096
+
+if [ $DSHOW ]; then
+    echo "Generating keys in this directory:" $(echo $PUBKEYDIR | sed "s|$HOME|~|g")
+    echo "Signer is $SIGNER" | sed "s|$HOME|~|g"
+    echo "  CPATH=$CPATH" | sed "s|$HOME|~|g"
+    echo "  PUBKEYFILE=$PUBKEYFILE" | sed "s|$HOME|~|g"
+    echo "  PRIVKEYFILE=$PRIVKEYFILE" | sed "s|$HOME|~|g"
+    echo "  B64KEYFILE=$B64KEYFILE" | sed "s|$HOME|~|g"
+    echo "  PUBKEYSTORE=$PUBKEYSTORE" | sed "s|$HOME|~|g"
+    echo "  PRIVKEYSTORE=$PRIVKEYSTORE" | sed "s|$HOME|~|g"
+    echo "  KEYTYPE=$KEYTYPE" | sed "s|$HOME|~|g"
+    exit
+fi
+
+create_keys(){
+    echo "Creating new SU3 $KEYTYPE keys for $SIGNER"
+    java -cp "$CPATH" net.i2p.crypto.SU3File keygen -t $KEYTYPE "$PUBKEYSTORE" "$PRIVKEYSTORE" $SIGNER || exit 1
+    echo '*** Save your password in a safe place!!! ***'
+    rm -rf logs/
+    chmod 444 "$PUBKEYSTORE"
+    chmod 400 "$PRIVKEYSTORE"
+    copy_keys
+}
+
+copy_keys(){
+    # copy to the router dir so verify will work
+    CDIR=$I2P/certificates/plugin
+    mkdir -p "$CDIR" || exit 1
+    CFILE=$CDIR/`echo $SIGNER | sed s/@/_at_/`.crt
+    cp "$PUBKEYSTORE" "$CFILE"
+    chmod 644 "$CFILE"
+    echo "Created new SU3 keys:" $(echo "$PUBKEYSTORE $PRIVKEYSTORE" | sed "s|$HOME|~|g" )
+    echo "Copied public key to" $(echo "$CFILE" | sed "s|$HOME|~|g") "for testing"
+}
+
+generate_keys(){
+    if [ ! -f "$PRIVKEYSTORE" ]; then
+        echo "Generating keys in this directory:" $(echo $PUBKEYDIR | sed "s|$HOME|~|g")
+        echo "Using I2P libraries from" $(echo $I2P/lib | sed "s|$HOME|~|g")
+        create_keys
+    fi
+}
+
+for var in "$@"; do
+    $var
+done
