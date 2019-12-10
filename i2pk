@@ -1,22 +1,26 @@
 #! /usr/bin/env sh
 
-if [ -z "$I2P" -a -d "$PWD/../i2p/pkg-temp" ]; then
+if [ -z "${I2P}" -a -d "$PWD/../i2p/pkg-temp" ]; then
 	export I2P=$PWD/../i2p/pkg-temp
+
+    if [ ! -d "$I2P" ]; then
+        export I2P=$HOME/i2p
+    fi
+
+    if [ ! -d "$I2P" ]; then
+        export I2P=/usr/share/i2p
+    fi
 fi
 
 if [ ! -d "$I2P" ]; then
-    export I2P=$HOME/i2p
-fi
-
-if [ ! -d "$I2P" ]; then
-    export I2P=/usr/share/i2p
-fi
-
-if [ ! -d "$I2P" ]; then
-	echo "Can't locate your I2P installation. Please add a environment variable named I2P with the path to the folder as value" 1>&2;
-	echo "On OSX this solved with running: export I2P=/Applications/i2p if default install directory is used. On Linux, this is" 1>&2;
-    echo "usually under \$HOME/i2p, or, if running as a service under Debian or Ubuntu, /usr/share/i2p." 1>&2;
+	echo "Can't locate your I2P installation. Please add a environment variable named I2P" 1>&2;
+    echo "with the path to the folder as value. On OSX this solved with running:" 1>&2;
+    echo "export I2P=/Applications/i2p if default install" "directory is used. On Linux, this" 1>&2;
+    echo "is usually under \$HOME/i2p, or, if running as a service under Debian or Ubuntu," 1>&2;
+    echo "/usr/share/i2p." 1>&2;
 	exit 1
+else
+    echo "$I2P" 1>&2;
 fi
 
 usage() {
