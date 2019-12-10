@@ -1,7 +1,9 @@
 #! /usr/bin/env sh
 
-if [ -z "${I2P}" -a -d "$PWD/../i2p/pkg-temp" ]; then
-	export I2P=$PWD/../i2p/pkg-temp
+if [ -z "$I2P" ]; then
+    if [ -d "$PWD/../i2p/pkg-temp" ]; then
+        export I2P=$PWD/../i2p/pkg-temp
+    fi
 
     if [ ! -d "$I2P" ]; then
         export I2P=$HOME/i2p
@@ -20,8 +22,10 @@ if [ ! -d "$I2P" ]; then
     echo "/usr/share/i2p." 1>&2;
 	exit 1
 else
-    echo "$I2P" 1>&2;
+    echo "$I2P" | sed "s|$HOME|~|g" 1>&2;
 fi
+
+KEYTYPE=RSA_SHA512_4096
 
 usage() {
     echo "# Generating I2P Plugin Signing Keys" 1>&2
@@ -38,6 +42,7 @@ usage() {
     echo "        -l : List keys" 1>&2;
     echo "        -p [path] : Path to an I2P installation directory, usually \$HOME/i2p." 1>&2;
     echo "        -s [signer] : Signer's e-mail address." 1>&2;
+    echo "        -t [keytype] : Key type to use. default: $KEYTYPE" 1>&2;
     echo "        -n [name] : Name to use for the key" 1>&2;
     echo "" 1>&2;
     echo "### Commands:" 1>&2;
@@ -52,7 +57,8 @@ usage() {
     exit 1;
 }
 
-while getopts "p:s:n:lhd" o; do
+
+while getopts "p:s:n:t:lhd" o; do
     case "${o}" in
         p)
             PUBKEYDIR=${OPTARG}
@@ -62,6 +68,9 @@ while getopts "p:s:n:lhd" o; do
             ;;
         n)
             NAME=${OPTARG}
+            ;;
+        t)
+            KEYTYPE=${OPTARG}
             ;;
         l)
             LS=true
@@ -97,8 +106,6 @@ PRIVKEYFILE=$PUBKEYDIR/$NAME-private-signing.key
 B64KEYFILE=$PUBKEYDIR/$NAME-public-signing.txt
 PUBKEYSTORE=$PUBKEYDIR/$NAME-su3-public-signing.crt
 PRIVKEYSTORE=$PUBKEYDIR/$NAME-su3-keystore.ks
-
-KEYTYPE=RSA_SHA512_4096
 
 if [ $LS ]; then
     if [ -d ${PUBKEYDIR} ]; then
