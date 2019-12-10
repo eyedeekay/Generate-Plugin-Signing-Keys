@@ -14,8 +14,8 @@ plugins.
         -s [signer] : Signer's e-mail address.
         -n [name] : Name to use for the key
 
-
 ### Commands:
+
          > generate_keys : If the keys do not already exist then
            > create_keys : create them
            > copy_keys : copy them to the local I2P plugin certificates directory

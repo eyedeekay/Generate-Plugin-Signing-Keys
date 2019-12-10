@@ -36,8 +36,8 @@ usage() {
     echo "        -s [signer] : Signer's e-mail address." 1>&2;
     echo "        -n [name] : Name to use for the key" 1>&2;
     echo "" 1>&2;
-    echo "" 1>&2;
     echo "### Commands:" 1>&2;
+    echo "" 1>&2;
     echo "         > generate_keys : If the keys do not already exist then" 1>&2;
     echo "           > create_keys : create them" 1>&2;
     echo "           > copy_keys : copy them to the local I2P plugin certificates directory" 1>&2;
