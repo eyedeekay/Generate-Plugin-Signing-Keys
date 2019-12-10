@@ -13,6 +13,7 @@ plugins.
         -p [path] : Path to an I2P installation directory, usually $HOME/i2p.
         -s [signer] : Signer's e-mail address.
         -t [keytype] : Key type to use. default: RSA_SHA512_4096
+        -v [version] : Version to use. default: 0.0.1
         -n [name] : Name to use for the key
 
 ### Commands:
