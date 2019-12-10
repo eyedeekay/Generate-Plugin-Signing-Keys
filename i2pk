@@ -91,6 +91,15 @@ if [ -z "${PUBKEYDIR}" ]; then
     PUBKEYDIR="$I2P/i2p-plugin-dev-keys"
 fi
 
+CPATH=$I2P/lib/i2p.jar:/usr/share/java/gnu-getopt.jar
+PUBKEYFILE=$PUBKEYDIR/$NAME-public-signing.key
+PRIVKEYFILE=$PUBKEYDIR/$NAME-private-signing.key
+B64KEYFILE=$PUBKEYDIR/$NAME-public-signing.txt
+PUBKEYSTORE=$PUBKEYDIR/$NAME-su3-public-signing.crt
+PRIVKEYSTORE=$PUBKEYDIR/$NAME-su3-keystore.ks
+
+KEYTYPE=RSA_SHA512_4096
+
 if [ $LS ]; then
     if [ -d ${PUBKEYDIR} ]; then
         echo "Keys found in key directory:"
@@ -100,17 +109,6 @@ if [ $LS ]; then
     fi
     exit
 fi
-
-CPATH=$I2P/lib/i2p.jar:/usr/share/java/gnu-getopt.jar
-
-
-PUBKEYFILE=$PUBKEYDIR/$NAME-public-signing.key
-PRIVKEYFILE=$PUBKEYDIR/$NAME-private-signing.key
-B64KEYFILE=$PUBKEYDIR/$NAME-public-signing.txt
-PUBKEYSTORE=$PUBKEYDIR/$NAME-su3-public-signing.crt
-PRIVKEYSTORE=$PUBKEYDIR/$NAME-su3-keystore.ks
-
-KEYTYPE=RSA_SHA512_4096
 
 if [ $DSHOW ]; then
     echo "Generating keys in this directory:" $(echo $PUBKEYDIR | sed "s|$HOME|~|g")
