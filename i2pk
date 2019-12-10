@@ -145,7 +145,6 @@ create_keys(){
     rm -rf logs/
     chmod 444 "$PUBKEYSTORE"
     chmod 400 "$PRIVKEYSTORE"
-    copy_keys
 }
 
 copy_keys(){
@@ -164,6 +163,7 @@ generate_keys(){
         echo "Generating keys in this directory:" $(echo $PUBKEYDIR | sed "s|$HOME|~|g")
         echo "Using I2P libraries from" $(echo $I2P/lib | sed "s|$HOME|~|g")
         create_keys
+        copy_keys
     fi
 }
 
