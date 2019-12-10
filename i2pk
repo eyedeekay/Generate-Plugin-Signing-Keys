@@ -168,7 +168,7 @@ generate_keys(){
 sign(){
     export PLUGIN=$(echo $1 | sed "s|.zip||g")
     echo "Signing. $1 => $PLUGIN ..."
-    echo java -cp "$CPATH" net.i2p.crypto.SU3File sign -c PLUGIN -t $KEYTYPE "$1" "$PLUGIN.su3" "$PRIVKEYSTORE" "$VERSION" "$SIGNER" || exit 1
+    echo java -cp "$CPATH" net.i2p.crypto.SU3File sign -c PLUGIN -t "$KEYTYPE" "$1" "$PLUGIN.su3" "$PRIVKEYSTORE" "$VERSION" "$SIGNER" || exit 1
 }
 
 verify(){
