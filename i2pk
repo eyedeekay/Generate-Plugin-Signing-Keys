@@ -1,5 +1,6 @@
 #! /usr/bin/env sh
 
+THISBIN="$0"
 if [ -z "$I2P" ]; then
     if [ -d "$PWD/../i2p/pkg-temp" ]; then
         export I2P=$PWD/../i2p/pkg-temp
@@ -38,9 +39,9 @@ usage() {
     echo "" 1>&2;
     echo "### Options" 1>&2;
     echo "" 1>&2;
-    echo "        -h : this message" 1>&2;
-    echo "        -d : show local defaults" 1>&2;
-    echo "        -l : List keys" 1>&2;
+    echo "        -h : this message." 1>&2;
+    echo "        -d : show local defaults." 1>&2;
+    echo "        -l : List keys." 1>&2;
     echo "        -p [path] : Path to an I2P installation directory, usually \$HOME/i2p." 1>&2;
     echo "        -s [signer] : Signer's e-mail address." 1>&2;
     echo "        -t [keytype] : Key type to use. default: $KEYTYPE" 1>&2;
@@ -49,12 +50,13 @@ usage() {
     echo "" 1>&2;
     echo "### Commands:" 1>&2;
     echo "" 1>&2;
-    echo "         > generate_keys : If the keys do not already exist then" 1>&2;
-    echo "           > create_keys : create them" 1>&2;
-    echo "           > copy_keys : copy them to the local I2P plugin certificates directory" 1>&2;
-    echo "         > sign [plugin .zip file] : sign a .zip file and output an .su3 file" 1>&2;
-    echo "         > verify [plugin .su3 file] : verify an .su3 file and show the result" 1>&2;
-    echo "         > usage : same as -h but use stderr instead of stdout" 1>&2;
+    echo "         > generate_keys : If the keys do not already exist then." 1>&2;
+    echo "           > create_keys : create them." 1>&2;
+    echo "           > copy_keys : copy them to the local I2P plugin certificates directory." 1>&2;
+    echo "         > sign [plugin .zip file] : sign a .zip file and output an .su3 file." 1>&2;
+    echo "         > verify [plugin .su3 file] : verify an .su3 file and show the result." 1>&2;
+    echo "         > install : install the script to the \$I2P path." 1>&2;
+    echo "         > usage : same as -h but use stderr instead of stdout." 1>&2;
     echo "" 1>&2;
     exit 1;
 }
@@ -176,6 +178,11 @@ verify(){
     java -cp "$CPATH" net.i2p.crypto.SU3File showversion "$1" || exit 1
     java -cp "$CPATH" net.i2p.crypto.SU3File verifysig -k "$PUBKEYSTORE" "$1" || exit 1
     rm -rf logs/
+}
+
+install(){
+    cp -v $THISBIN $I2P/$THISBIN
+    chmod +x $I2P/$THISBIN
 }
 
 $1 $2
