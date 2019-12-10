@@ -26,6 +26,7 @@ else
 fi
 
 KEYTYPE=RSA_SHA512_4096
+VERSION=0.0.1
 
 usage() {
     echo "# Generating I2P Plugin Signing Keys" 1>&2
@@ -43,6 +44,7 @@ usage() {
     echo "        -p [path] : Path to an I2P installation directory, usually \$HOME/i2p." 1>&2;
     echo "        -s [signer] : Signer's e-mail address." 1>&2;
     echo "        -t [keytype] : Key type to use. default: $KEYTYPE" 1>&2;
+    echo "        -v [version] : Version to use. default: $VERSION" 1>&2;
     echo "        -n [name] : Name to use for the key" 1>&2;
     echo "" 1>&2;
     echo "### Commands:" 1>&2;
@@ -71,6 +73,9 @@ while getopts "p:s:n:t:lhd" o; do
             ;;
         t)
             KEYTYPE=${OPTARG}
+            ;;
+        v)
+            VERSION=${OPTARG}
             ;;
         l)
             LS=true
@@ -120,6 +125,7 @@ fi
 if [ $DSHOW ]; then
     echo "Generating keys in this directory:" $(echo $PUBKEYDIR | sed "s|$HOME|~|g")
     echo "Signer is $SIGNER" | sed "s|$HOME|~|g"
+    echo "Version is $VERSION" | sed "s|$HOME|~|g"
     echo "  CPATH=$CPATH" | sed "s|$HOME|~|g"
     echo "  PUBKEYFILE=$PUBKEYFILE" | sed "s|$HOME|~|g"
     echo "  PRIVKEYFILE=$PRIVKEYFILE" | sed "s|$HOME|~|g"
