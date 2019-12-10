@@ -13,30 +13,37 @@ if [ ! -d "$I2P" ]; then
 fi
 
 if [ ! -d "$I2P" ]; then
-	echo "Can't locate your I2P installation. Please add a environment variable named I2P with the path to the folder as value"
-	echo "On OSX this solved with running: export I2P=/Applications/i2p if default install directory is used. On Linux, this is"
-    echo "usually under \$HOME/i2p, or, if running as a service under Debian or Ubuntu, /usr/share/i2p."
+	echo "Can't locate your I2P installation. Please add a environment variable named I2P with the path to the folder as value" 1>&2;
+	echo "On OSX this solved with running: export I2P=/Applications/i2p if default install directory is used. On Linux, this is" 1>&2;
+    echo "usually under \$HOME/i2p, or, if running as a service under Debian or Ubuntu, /usr/share/i2p." 1>&2;
 	exit 1
 fi
 
 usage() {
     echo "# Generating I2P Plugin Signing Keys" 1>&2
     echo "" 1>&2;
+    echo "This is a shell script that makes it easier to generate signing keys for I2P" 1>&2;
+    echo "plugins." 1>&2;
+    echo "" 1>&2;
     echo "## Usage: $0" 1>&2;
     echo "" 1>&2;
     echo "### Options" 1>&2;
-    echo "        -h this message" 1>&2;
-    echo "        -d show local defaults" 1>&2;
-    echo "        -l List keys" 1>&2;
-    echo "        -p [path] Path to an I2P installation directory, usually \$HOME/i2p." 1>&2;
-    echo "        -s [signer] Signer's e-mail address." 1>&2;
-    echo "        -n [name] Name to use for the key" 1>&2;
+    echo "" 1>&2;
+    echo "        -h : this message" 1>&2;
+    echo "        -d : show local defaults" 1>&2;
+    echo "        -l : List keys" 1>&2;
+    echo "        -p [path] : Path to an I2P installation directory, usually \$HOME/i2p." 1>&2;
+    echo "        -s [signer] : Signer's e-mail address." 1>&2;
+    echo "        -n [name] : Name to use for the key" 1>&2;
+    echo "" 1>&2;
     echo "" 1>&2;
     echo "### Commands:" 1>&2;
-    echo "         > generate_keys - If the keys do not already exist then" 1>&2;
-    echo "           > create_keys - create them" 1>&2;
-    echo "           > copy_keys - copy them to the local I2P plugin certificates directory" 1>&2;
-    echo "         > usage - same as -h but use stderr instead of stdout" 1>&2;
+    echo "         > generate_keys : If the keys do not already exist then" 1>&2;
+    echo "           > create_keys : create them" 1>&2;
+    echo "           > copy_keys : copy them to the local I2P plugin certificates directory" 1>&2;
+    echo "         > sign [plugin .zip file] : sign a .zip file and output an .su3 file" 1>&2;
+    echo "         > verify [plugin .su3 file] : verify an .su3 file and show the result" 1>&2;
+    echo "         > usage : same as -h but use stderr instead of stdout" 1>&2;
     echo "" 1>&2;
     exit 1;
 }
@@ -143,6 +150,18 @@ generate_keys(){
     fi
 }
 
+sign(){
+    echo "Signing. $1 ..."
+    echo java -cp "$CPATH" net.i2p.crypto.SU3File sign -c PLUGIN -t $KEYTYPE "$1" "$1.su3" "$PRIVKEYSTORE" "$VERSION" "$SIGNER" || exit 1
+}
+
+verify(){
+    echo "Verifying. $1 ..."
+    java -cp "$CPATH" net.i2p.crypto.SU3File showversion "$1" || exit 1
+    java -cp "$CPATH" net.i2p.crypto.SU3File verifysig -k "$PUBKEYSTORE" "$1" || exit 1
+    rm -rf logs/
+}
+
 for var in "$@"; do
-    $var
+    $var $2
 done
