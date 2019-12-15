@@ -67,7 +67,7 @@ while getopts "p:s:n:t:lhd" o; do
         p)
             PUBKEYDIR=${OPTARG}
             ;;
-        p)
+        s)
             SIGNER=${OPTARG}
             ;;
         n)
