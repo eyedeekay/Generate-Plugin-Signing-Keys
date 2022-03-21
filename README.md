@@ -1,7 +1,7 @@
 # Generating I2P Plugin Signing Keys
 
 This is a shell script that makes it easier to generate signing keys for I2P
-plugins.
+updates. It supports multiple update types.
 
 ## Usage: ./i2pk
 
@@ -12,6 +12,7 @@ plugins.
         -l : List keys.
         -p [path] : Path to generate the keystore, usually $I2P/i2p-plugin-dev-keys.
         -c [certtype] : Type of certificate to install, plugin, router, news etc
+        -f [filetype] : Type of file to bundle
         -s [signer] : Signer's e-mail address.
         -t [keytype] : Key type to use. default: RSA_SHA512_4096
         -v [version] : Version to use. default: 0.0.1

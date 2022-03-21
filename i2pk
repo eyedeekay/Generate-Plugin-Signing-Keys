@@ -1,5 +1,6 @@
 #! /usr/bin/env sh
 
+FILETYPE=ZIP
 THISBIN="$0"
 if [ -z "$I2P" ]; then
     if [ -d "$PWD/../i2p/pkg-temp" ]; then
@@ -45,6 +46,7 @@ usage() {
     echo "        -p [path] : Path to generate the keystore, usually \$I2P/i2p-plugin-dev-keys." 1>&2;
     echo "        -c [certtype] : Type of certificate to install, plugin, router, news etc" 1>&2;
     echo "        -s [signer] : Signer's e-mail address." 1>&2;
+    echo "        -f [filetype] : Type of file to bundle." 1>&2;
     echo "        -t [keytype] : Key type to use. default: $KEYTYPE" 1>&2;
     echo "        -v [version] : Version to use. default: $VERSION" 1>&2;
     echo "        -n [name] : Name to use for the key" 1>&2;
@@ -63,7 +65,7 @@ usage() {
 }
 
 
-while getopts "p:s:n:t:v:c:lhd" o; do
+while getopts "p:s:n:t:v:c:f:lhd" o; do
     case "${o}" in
         p)
             PUBKEYDIR=${OPTARG}
@@ -82,6 +84,9 @@ while getopts "p:s:n:t:v:c:lhd" o; do
             ;;
         c)
             CERTTYPE=${OPTARG}
+            ;;
+        f)
+            FILETYPE=${OPTARG}
             ;;
         l)
             LS=true
@@ -175,7 +180,7 @@ sign(){
     export PLUGIN=$(echo $1 | sed "s|.zip||g")
     echo "Signing. $1 => $PLUGIN ..."
     CERTYPE=$(echo $CERTTYPE | tr '[:lower:]' '[:upper:]')
-    java -cp "$CPATH" net.i2p.crypto.SU3File sign -c "$CERTYPE" -t "$KEYTYPE" "$1" "$PLUGIN.su3" "$PRIVKEYSTORE" "$VERSION" "$SIGNER" || exit 1
+    java -cp "$CPATH" net.i2p.crypto.SU3File sign -f "$FILETYPE" -c "$CERTYPE" -t "$KEYTYPE" "$1" "$PLUGIN.su3" "$PRIVKEYSTORE" "$VERSION" "$SIGNER" || exit 1
     rm -rf logs/
 }
 
