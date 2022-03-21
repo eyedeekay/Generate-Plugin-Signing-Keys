@@ -1,5 +1,5 @@
 
-NAME=`echo $(PWD) | sed 's/^.*\///'`
+NAME=`echo $(PWD) | sed 's/^.*\///' | sed 's|-| |g'`
 
 index:
 	echo "<DOCTYPE html>" > index.html
