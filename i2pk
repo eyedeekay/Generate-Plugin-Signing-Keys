@@ -62,7 +62,7 @@ usage() {
 }
 
 
-while getopts "p:s:n:t:lhd" o; do
+while getopts "p:s:n:t:v:c:lhd" o; do
     case "${o}" in
         p)
             PUBKEYDIR=${OPTARG}
@@ -78,6 +78,9 @@ while getopts "p:s:n:t:lhd" o; do
             ;;
         v)
             VERSION=${OPTARG}
+            ;;
+        c)
+            CERTTYPE=${OPTARG}
             ;;
         l)
             LS=true
@@ -149,7 +152,7 @@ create_keys(){
 
 copy_keys(){
     # copy to the router dir so verify will work
-    CDIR=$I2P/certificates/plugin
+    CDIR=$I2P/certificates/$CERTTYPE
     mkdir -p "$CDIR" || exit 1
     CFILE=$CDIR/`echo $SIGNER | sed s/@/_at_/`.crt
     cp "$PUBKEYSTORE" "$CFILE"
