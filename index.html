@@ -1,0 +1,30 @@
+<DOCTYPE html>
+<html>
+<head>
+<title>Generate-Plugin-Signing-Keys</title>
+</head>
+<body>
+<h1>Generate-Plugin-Signing-Keys</h1>
+<h1 id="generating-i2p-plugin-signing-keys">Generating I2P Plugin Signing Keys</h1>
+<p>This is a shell script that makes it easier to generate signing keys for I2P plugins.</p>
+<h2 id="usage-.i2pk">Usage: ./i2pk</h2>
+<h3 id="options">Options</h3>
+<pre><code>    -h : this message.
+    -d : show local defaults.
+    -l : List keys.
+    -p [path] : Path to generate the keystore, usually $I2P/i2p-plugin-dev-keys.
+    -c [certtype] : Type of certificate to install, plugin, router, news etc
+    -s [signer] : Signer&#39;s e-mail address.
+    -t [keytype] : Key type to use. default: RSA_SHA512_4096
+    -v [version] : Version to use. default: 0.0.1
+    -n [name] : Name to use for the key</code></pre>
+<h3 id="commands">Commands:</h3>
+<pre><code>     &gt; generate_keys : If the keys do not already exist then.
+       &gt; create_keys : create them.
+       &gt; copy_keys : copy them to the local I2P plugin certificates directory.
+     &gt; sign [plugin .zip file] : sign a .zip file and output an .su3 file.
+     &gt; verify [plugin .su3 file] : verify an .su3 file and show the result.
+     &gt; install : install the script to the $I2P path.
+     &gt; usage : same as -h but use stderr instead of stdout.</code></pre>
+</body>
+</html>

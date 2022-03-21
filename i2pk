@@ -43,6 +43,7 @@ usage() {
     echo "        -d : show local defaults." 1>&2;
     echo "        -l : List keys." 1>&2;
     echo "        -p [path] : Path to generate the keystore, usually \$I2P/i2p-plugin-dev-keys." 1>&2;
+    echo "        -c [certtype] : Type of certificate to install, plugin, router, news etc" 1>&2;
     echo "        -s [signer] : Signer's e-mail address." 1>&2;
     echo "        -t [keytype] : Key type to use. default: $KEYTYPE" 1>&2;
     echo "        -v [version] : Version to use. default: $VERSION" 1>&2;
